@@ -7,6 +7,13 @@
 
 <style>
 :root{
+  /* Add this directly under your :root block */
+body:has([data-overlay="1"]), 
+body:has([data-overlay="1"]) .app, 
+body:has([data-overlay="1"]) .canvas {
+  background: transparent !important;
+  background-color: transparent !important;
+}
   --ink:#14110D; --surface:#1D1913; --raise:#262019; --line:#3A3227;
   --bone:#EFE6D5; --mute:#8C8071; --amber:#FFB020; --tally:#FF3B30;
   --brand:#B00404; --brand-lo:#9C0202; --brand-hi:#BE0808; --stripe:#C55050;
@@ -348,13 +355,18 @@ const AR = {bag_blossom:0.652, bag_arthur:0.651, roll_soft:0.939, boxes:1.227,
   const buildTime = () => 1.0 + (N - 1) * S.stag / 1000 + 0.56;   // last object lands
 
   function paint(){
-    $('#num').innerHTML = S.num.trim().split(/\s+/).slice(0,3)
-      .map(g => `<span class="g"><i>${g.replace(/[<>&]/g,'')}</i></span>`).join('');
-    lt.dataset.style = S.style;
-    mount.style.setProperty('--y', S.y + 'px');
-    gfx.style.setProperty('--k', S.w / 1313);
-    canvas.className = 'canvas bg-' + S.bg;
-  }
+  // 1. Check for the overlay parameter and add the 'overlay' class to the body
+  const isOverlay = new URLSearchParams(window.location.search).has('overlay');
+  document.body.classList.toggle('overlay', isOverlay);
+  
+  // 2. Existing functionality
+  $('#num').innerHTML = S.num.trim().split(/\s+/).slice(0,3)
+    .map(g => `<span class="g"><i>${g.replace(/[<>&]/g,'')}</i></span>`).join('');
+  lt.dataset.style = S.style;
+  mount.style.setProperty('--y', S.y + 'px');
+  gfx.style.setProperty('--k', S.w / 1313);
+  canvas.className = 'canvas bg-' + S.bg;
+}
   function fit(){
     const b = viewport.getBoundingClientRect();
     canvas.style.transform = `scale(${Math.min(b.width/1080, b.height/1920)})`;
